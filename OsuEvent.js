@@ -1,4 +1,5 @@
 const { get } = require('axios');
+const Beatmap = require('./Beatmap');
 
 /**
  * Create new osu event
@@ -8,14 +9,14 @@ const { get } = require('axios');
  */
 class OsuEvent {
     #client;
+    #eventStartDate;
+    #beatmap;
     constructor(client, osuApiKey, bannedMods) {
         this.bannedMods = bannedMods || [];
         this.scores = [];
         this.players = new Map();
         this.apiKey = osuApiKey;
         this.#client = client;
-        this.eventStartDate;
-        this.beatmap;
     }
 
     /**
@@ -24,7 +25,7 @@ class OsuEvent {
      */
     start(beatmapURL) {
         return new Promise(async (resolve, reject) => {
-            if(!beatmapURL || !beatmapURL.match(/^https?:\/\/osu.ppy.sh\/beatmapsets\/[0-9]*/)) {
+            if(!beatmapURL || !beatmapURL.match(/^https?:\/\/osu.ppy.sh\/beatmapsets\/\d*#(osu|taiko|fruits|mania)\/\d*/)) {
                 return reject(new Error('Beatmap URL provided is not valid'));
             }
             const beatmapID = beatmapURL.split("/")[5];
@@ -34,9 +35,12 @@ class OsuEvent {
                 }
                 return reject(new Error('Cannot find beatmap informations'));
             });
-            this.beatmap = beatmapRequest.data[0];
-            this.eventStartDate = Date.now() - 7200000;
-            return resolve('Event started');
+            this.#beatmap = new Beatmap(beatmapRequest.data[0]);
+            this.#eventStartDate = Date.now() - 7200000;
+            if(!this.#beatmap.isRanked()) {
+                return reject(new Error('Cannot get scores of unranked map'));
+            }
+            return resolve(this.#beatmap);
         })
     }
 
@@ -73,10 +77,10 @@ class OsuEvent {
 
     /**
      * Get the beatmap informations
-     * @returns {Object} beatmap informations
+     * @returns {Beatmap} beatmap informations
      */
     getBeatmap() {
-        return this.beatmap;
+        return this.#beatmap;
     }
 
     /**
@@ -94,8 +98,8 @@ class OsuEvent {
                 const bestScore = userRecentScores.data
                 .filter(
                   score =>
-                    new Date(score.date) > this.eventStartDate &&
-                    score.beatmap_id === this.beatmap.beatmap_id &&
+                    new Date(score.date) > this.#eventStartDate &&
+                    score.beatmap_id === this.#beatmap.getData().beatmap_id &&
                     this._osuMods(parseInt(score.enabled_mods)).some(
                       r => !this.bannedMods.includes(r)
                     )
@@ -129,6 +133,7 @@ class OsuEvent {
                 }           
             }
         }
+        this.scores = this.scores.sort((a, b) => b.score - a.score);
         return this.scores;
     }
 
