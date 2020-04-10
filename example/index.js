@@ -9,10 +9,6 @@ client.login('');
 client.on('message', async message => {
   let args = message.content.slice(prefix.length).trim().split(/ +/g);
   if(message.content.startsWith(`${prefix}osuevent`)) {
-    if(!args[1].match(/^https?:\/\/osu.ppy.sh\/beatmapsets\/[0-9]*/)) {
-      return message.channel.send('The beatmap URL provided is not valid');
-    }
-
     const event = new OsuEvent(
       client,
       'osuApiKey',
