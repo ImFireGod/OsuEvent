@@ -25,7 +25,7 @@ class OsuEvent {
      */
     start(beatmapURL) {
         return new Promise(async (resolve, reject) => {
-            if(!beatmapURL || !beatmapURL.match(/^https?:\/\/osu.ppy.sh\/beatmapsets\/\d*#(osu|taiko|fruits|mania)\/\d*/)) {
+            if(!beatmapURL || !beatmapURL.match(/^https?:\/\/osu\.ppy\.sh\/beatmapsets\/\d*#(osu|taiko|fruits|mania)\/\d*/)) {
                 return reject(new Error('Beatmap URL provided is not valid'));
             }
             const beatmapID = beatmapURL.split("/")[5];
