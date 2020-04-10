@@ -19,9 +19,12 @@ client.on('message', async message => {
       ['NF', 'HT'] //Banned mods
     );
 
-    const osuEvent = await event.start(args[1]);
-    if(!osuEvent) {
-      return message.channel.send('Can\'t get beatmap informations');
+    const osuEvent = await event.start(args[1]).catch(e => {
+      return e.toString()
+    });
+
+    if(typeof osuEvent === 'string') {
+      return message.channel.send(osuEvent);
     }
 
     const eventMessage = await message.channel.send('Join the event with ➕');
