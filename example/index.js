@@ -22,7 +22,11 @@ client.on('message', async message => {
     if(typeof osuEvent === 'string') {
       return message.channel.send(osuEvent);
     }
-
+    
+    /*You can get beatmap informations with event.getBeatmap()
+      event.getBeatmap().getDuration() -> time in hh:mm:ss
+      event.getBeatmap().getUrl() -> url of the beatmap
+    */
     const eventMessage = await message.channel.send('Join the event with ➕');
     eventMessage.react('➕');
 
