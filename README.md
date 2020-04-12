@@ -20,11 +20,12 @@ const event = new OsuEvent(
 
 Vous pouvez récupérer diverses informations à propos de la beatmap.
 ```JS
-<Beatmap>.getDuration() //=> Donne la durée de la beatmap sous forme (hh)mm:ss
-<Beatmap>.getUrl() //=> Donne l'url de la beatmap
-<Beatmap>.isRanked() //=> Retourne un booléen pour savoir si une beatmap est ranked
-<Beatmap>.getCoverImageUrl() //=> Donne l'url de l'image de fond d'une beatmap
-<Beatmap>.getData() //=> Retourne les données brutes de la beatmap
+const beatmap = await event.start('beatmapURL');
+beatmap.getDuration() //=> Donne la durée de la beatmap sous forme (hh)mm:ss
+beatmap.getUrl() //=> Donne l'url de la beatmap
+beatmap.isRanked() //=> Retourne un booléen pour savoir si une beatmap est ranked
+beatmap.getCoverImageUrl() //=> Donne l'url de l'image de fond d'une beatmap
+beatmap.getData() //=> Retourne les données brutes de la beatmap
 //...
 ```
 
